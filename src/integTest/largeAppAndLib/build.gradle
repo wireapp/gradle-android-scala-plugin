@@ -4,15 +4,17 @@ buildscript {
         maven {
             url snaphotRepositoryUrl
         }
+        google()
     }
     dependencies {
         classpath "com.android.tools.build:gradle:$androidPluginVersion"
-        classpath "jp.leafytree.gradle:gradle-android-scala-plugin:$androidScalaPluginVersion"
+        classpath "com.wire.gradle:gradle-android-scala-plugin:$androidScalaPluginVersion"
     }
 }
 
 allprojects {
     repositories {
         jcenter()
+        google()
     }
 }

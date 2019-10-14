@@ -4,16 +4,18 @@ buildscript {
         maven {
             url snaphotRepositoryUrl
         }
+        google()
     }
 
     dependencies {
         classpath "com.android.tools.build:gradle:$androidPluginVersion"
-        classpath "jp.leafytree.gradle:gradle-android-scala-plugin:$androidScalaPluginVersion"
+        classpath "com.wire.gradle:gradle-android-scala-plugin:$androidScalaPluginVersion"
     }
 }
 
 repositories {
     jcenter()
+    google()
 }
 
 apply plugin: "com.android.application"
@@ -31,6 +33,8 @@ android {
         versionName "1.0"
         multiDexEnabled true
     }
+
+    flavorDimensions "default"
 
     productFlavors {
         flavor1 {
@@ -68,6 +72,6 @@ android {
 
 dependencies {
     compile "org.scala-lang:scala-library:$scalaLibraryVersion"
-    compile "com.android.support:multidex:1.0.1"
-    androidTestCompile "com.android.support:multidex-instrumentation:1.0.1", { exclude module: "multidex" }
+    compile "com.android.support:multidex:1.0.2"
+    androidTestCompile "com.android.support:multidex-instrumentation:1.0.2", { exclude module: "multidex" }
 }

@@ -146,7 +146,7 @@ android {
 
 dependencies {
     compile "org.scala-lang:scala-library:2.11.7"
-    compile "com.android.support:multidex:1.0.1"
+    compile "com.android.support:multidex:1.0.2"
 }
 ```
 
@@ -175,8 +175,8 @@ android {
 
 dependencies {
     compile "org.scala-lang:scala-library:2.11.7"
-    compile "com.android.support:multidex:1.0.1"
-    androidTestCompile "com.android.support:multidex-instrumentation:1.0.1", { exclude module: "multidex" }
+    compile "com.android.support:multidex:1.0.2"
+    androidTestCompile "com.android.support:multidex-instrumentation:1.0.2", { exclude module: "multidex" }
 }
 ```
 
@@ -285,6 +285,8 @@ android {
         multiDexEnabled true
     }
 
+    flavorDimensions "default"
+
     productFlavors {
         dev {
             minSdkVersion 21 // To reduce compilation time
@@ -312,8 +314,8 @@ android {
 
 dependencies {
     compile "org.scala-lang:scala-library:2.11.7"
-    compile "com.android.support:multidex:1.0.1"
-    androidTestCompile "com.android.support:multidex-instrumentation:1.0.1", { exclude module: "multidex" }
+    compile "com.android.support:multidex:1.0.2"
+    androidTestCompile "com.android.support:multidex-instrumentation:1.0.2", { exclude module: "multidex" }
 }
 
 tasks.withType(ScalaCompile) {

@@ -1,16 +1,18 @@
 buildscript {
     repositories {
         mavenCentral()
+        google()
     }
 
     dependencies {
         classpath "com.android.tools.build:gradle:3.2.1"
-        classpath "jp.leafytree.gradle:gradle-android-scala-plugin:1.4"
+        classpath "com.wire.gradle:gradle-android-scala-plugin:$androidScalaPluginVersion"
     }
 }
 
 repositories {
     jcenter()
+    google()
 }
 
 apply plugin: "com.android.application"
@@ -27,6 +29,8 @@ android {
         versionName "1.0"
         multiDexEnabled true
     }
+
+    flavorDimensions "default"
 
     productFlavors {
         dev {
@@ -51,8 +55,8 @@ android {
 
 dependencies {
     compile "org.scala-lang:scala-library:2.11.7"
-    compile "com.android.support:multidex:1.0.1"
-    androidTestCompile "com.android.support:multidex-instrumentation:1.0.1", { exclude module: "multidex" }
+    compile "com.android.support:multidex:1.0.2"
+    androidTestCompile "com.android.support:multidex-instrumentation:1.0.2", { exclude module: "multidex" }
 
     // to break 64k limit
     compile "org.scalaz:scalaz-core_2.11:7.1.0"

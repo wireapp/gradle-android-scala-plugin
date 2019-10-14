@@ -14,6 +14,8 @@ android {
         multiDexEnabled true
     }
 
+    flavorDimensions "default"
+
     productFlavors {
         flavor1 {}
         flavor2 {}
@@ -40,9 +42,9 @@ android {
 dependencies {
     flavor1Compile "org.scala-lang:scala-library:$scalaLibraryVersion"
     flavor2Compile "org.scala-lang:scala-library:$scalaLibraryVersion"
-    compile "com.android.support:multidex:1.0.1"
+    compile "com.android.support:multidex:1.0.2"
     compile project(":lib")
-    androidTestCompile "com.android.support:multidex-instrumentation:1.0.1", { exclude module: "multidex" }
+    androidTestCompile "com.android.support:multidex-instrumentation:1.0.2", { exclude module: "multidex" }
 
     // to break 65535 method limitation
     compile "org.scalaz:scalaz-core_$scalaDependencyVersion:7.0.6"

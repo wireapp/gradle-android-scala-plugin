@@ -48,7 +48,7 @@ public class AndroidScalaPluginIntegrationTestTask extends DefaultTask {
                 if (!travis || (runOnTravis && testParameters[1])) {
                     def gradleVersion = testParameters[0]
                     def gradleWrapperProperties = getGradleWrapperProperties(gradleVersion)
-                    def gradleProperties = getGradleProperties(testParameters.drop(2))
+                    def gradleProperties = getGradleProperties(testParameters[2], testParameters[3], testParameters[4], testParameters[5], testParameters[6], testParameters[7])
                     println "Test $gradleArgs GRADLE_VERSION:$gradleVersion $gradleProperties"
                     runProject(projectName, gradleArgs, gradleWrapperProperties, gradleProperties)
                 }
@@ -78,7 +78,7 @@ public class AndroidScalaPluginIntegrationTestTask extends DefaultTask {
                 snaphotRepositoryUrl: snaphotRepositoryUrl,
                 scalaLibraryVersion: scalaLibraryVersion,
                 scalaDependencyVersion: scalaLibraryVersion.split("\\.").take(2).join("."),
-                androidScalaPluginVersion: "1.5-SNAPSHOT",
+                androidScalaPluginVersion: "1.6-SNAPSHOT",
                 androidPluginVersion: androidPluginVersion,
                 androidPluginCompileSdkVersion: androidPluginCompileSdkVersion,
                 androidPluginBuildToolsVersion: androidPluginBuildToolsVersion,

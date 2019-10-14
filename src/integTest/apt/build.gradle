@@ -4,21 +4,21 @@ buildscript {
         maven {
             url snaphotRepositoryUrl
         }
+        google()
     }
 
     dependencies {
         classpath "com.android.tools.build:gradle:$androidPluginVersion"
-        classpath "jp.leafytree.gradle:gradle-android-scala-plugin:$androidScalaPluginVersion"
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.4+'
+        classpath "com.wire.gradle:gradle-android-scala-plugin:$androidScalaPluginVersion"
     }
 }
 
 repositories {
     jcenter()
+    google()
 }
 
 apply plugin: "com.android.application"
-apply plugin: "com.neenbedankt.android-apt"
 apply plugin: "jp.leafytree.android-scala"
 
 android {
@@ -32,6 +32,14 @@ android {
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ['resourcePackageName': "jp.leafytree.android.hello",
+                             'androidManifestFile': "src/main/AndroidManifest.xml"]
+
+            }
+        }
     }
 
     dexOptions {
@@ -42,19 +50,12 @@ android {
     }
 }
 
-apt {
-    arguments {
-        resourcePackageName "jp.leafytree.android.hello"
-        androidManifestFile "src/main/AndroidManifest.xml"
-    }
-}
-
 def AAVersion = "3.2"
 
 dependencies {
-    apt "org.androidannotations:androidannotations:$AAVersion"
+    annotationProcessor "org.androidannotations:androidannotations:$AAVersion"
     compile "org.androidannotations:androidannotations-api:$AAVersion"
     compile "org.scala-lang:scala-library:$scalaLibraryVersion"
-    compile "com.android.support:multidex:1.0.1"
-    androidTestCompile "com.android.support:multidex-instrumentation:1.0.1", { exclude module: "multidex" }
+    compile "com.android.support:multidex:1.0.2"
+    androidTestCompile "com.android.support:multidex-instrumentation:1.0.2", { exclude module: "multidex" }
 }
