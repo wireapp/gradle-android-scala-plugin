@@ -23,7 +23,7 @@ public class AndroidScalaPluginIntegrationTestTask extends DefaultTask {
 
     static def GRADLE_VERSION = "4.10.2"
     static def ANDROID_GRADLE_PLUGIN_VERSION = "3.2.1"
-    static def ANDROID_BUILD_TOOLS_VERSION = "23.0.3"
+    static def ANDROID_BUILD_TOOLS_VERSION = "28.0.3"
 
     @TaskAction
     def run() {
