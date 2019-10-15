@@ -8,8 +8,10 @@ android {
     defaultConfig {
         minSdkVersion Integer.decode(androidPluginMinSdkVersion)
         targetSdkVersion Integer.decode(androidPluginTargetSdkVersion)
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
     }
 
     packagingOptions {
@@ -27,5 +29,9 @@ android {
 
 dependencies {
     implementation project(":lib")
+    implementation "com.android.support:multidex:1.0.2"
     androidTestImplementation "org.scala-lang:scala-library:$scalaLibraryVersion"
+    androidTestImplementation "junit:junit:4.12"
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test:rules:1.0.2'
 }

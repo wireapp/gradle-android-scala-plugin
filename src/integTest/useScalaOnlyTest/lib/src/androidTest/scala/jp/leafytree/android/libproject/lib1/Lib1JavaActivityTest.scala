@@ -1,20 +1,35 @@
 package jp.leafytree.android.libproject.lib1
 
-import android.test.ActivityInstrumentationTestCase2
 import android.view.ViewGroup
 import android.widget.TextView
 import junit.framework.Assert
 import scala.collection.concurrent.TrieMap
 
-class Lib1JavaActivityTest extends ActivityInstrumentationTestCase2[Lib1JavaActivity](classOf[Lib1JavaActivity]) {
+import android.support.test.rule.ActivityTestRule
+import android.support.test.runner.AndroidJUnit4
+import org.junit.{Rule, Test}
+import org.junit.runner.RunWith
+
+@RunWith(classOf[AndroidJUnit4])
+class Lib1JavaActivityTest {
+
+  private lazy val activityTestRule = new ActivityTestRule[Lib1JavaActivity](classOf[Lib1JavaActivity])
+
+  @Rule
+  def getActivityTestRule(): ActivityTestRule[Lib1JavaActivity] = activityTestRule
+
+  @Test
   def test1() {
     Assert.assertTrue(true)
   }
 
+  @Test
   def test2() {
-    Assert.assertEquals("Lib1Java", getActivity.findViewById(android.R.id.content).asInstanceOf[ViewGroup].getChildAt(0).asInstanceOf[TextView].getText)
+    Assert.assertEquals("Lib1Java", activityTestRule.getActivity
+      .findViewById(android.R.id.content).asInstanceOf[ViewGroup].getChildAt(0).asInstanceOf[TextView].getText)
   }
 
+  @Test
   def test3() {
     val map = TrieMap[String, String]()
     map.put("1", "Lib1Java")

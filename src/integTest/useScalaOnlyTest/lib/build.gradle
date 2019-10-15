@@ -8,7 +8,7 @@ android {
     defaultConfig {
         minSdkVersion Integer.decode(androidPluginMinSdkVersion)
         targetSdkVersion Integer.decode(androidPluginTargetSdkVersion)
-        testInstrumentationRunner "com.android.test.runner.MultiDexTestRunner"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
@@ -29,8 +29,10 @@ android {
 
 dependencies {
     implementation "com.android.support:multidex:1.0.2"
-    androidTestImplementation "com.android.support:multidex-instrumentation:1.0.2", { exclude module: "multidex" }
+    androidTestImplementation "junit:junit:4.12"
     androidTestImplementation "org.scala-lang:scala-library:$scalaLibraryVersion"
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test:rules:1.0.2'
 
     // to break 65535 method limitation
     //androidTestCompile "org.scalaz:scalaz-core_$scalaDependencyVersion:7.0.6"

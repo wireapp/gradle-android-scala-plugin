@@ -1,27 +1,35 @@
 package jp.leafytree.android.libproject.lib1;
 
-import android.test.ActivityInstrumentationTestCase2;
 import android.widget.TextView;
-
+import android.support.test.rule.ActivityTestRule;
+import android.support.test.runner.AndroidJUnit4;
+import org.junit.Assert;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import scala.collection.concurrent.TrieMap;
 
-public class Lib1ScalaActivityJavaTest extends ActivityInstrumentationTestCase2<Lib1ScalaActivity> {
-    public Lib1ScalaActivityJavaTest() {
-        super("jp.leafytree.android.libproject.lib1", Lib1ScalaActivity.class);
-    }
+@RunWith(AndroidJUnit4.class)
+public class Lib1ScalaActivityJavaTest {
 
+    @Rule
+    public ActivityTestRule<Lib1ScalaActivity> activityTestRule = new ActivityTestRule<>(Lib1ScalaActivity.class);
+
+    @Test
     public void testSimpleAssertion() {
-        assertTrue(true);
+        Assert.assertTrue(true);
     }
 
+    @Test
     public void testSimpleActivityAssertion() {
-        assertEquals("Lib1Java", ((TextView) getActivity().findViewById(R.id.scala_text_view)).getText());
+        Assert.assertEquals("Lib1Java", ((TextView) activityTestRule.getActivity().findViewById(R.id.scala_text_view)).getText());
     }
 
+    @Test
     public void testCallScalaLibraryClassOfNotUsedByMainApp() {
         TrieMap<String, String> map = new TrieMap<String, String>();
         map.put("x", "Lib1Java");
-        assertEquals(map.apply("x"), ((TextView) getActivity().findViewById(R.id.scala_text_view)).getText());
+        Assert.assertEquals(map.apply("x"), ((TextView) activityTestRule.getActivity().findViewById(R.id.scala_text_view)).getText());
     }
 }

@@ -1,18 +1,26 @@
 package jp.leafytree.android.libproject.lib1;
 
-import android.test.ActivityInstrumentationTestCase2;
 import android.widget.TextView;
+import android.support.test.rule.ActivityTestRule;
+import android.support.test.runner.AndroidJUnit4;
+import org.junit.Assert;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
-public class Lib1ScalaActivityJavaTest extends ActivityInstrumentationTestCase2<Lib1ScalaActivity> {
-    public Lib1ScalaActivityJavaTest() {
-        super(Lib1ScalaActivity.class);
-    }
+@RunWith(AndroidJUnit4.class)
+public class Lib1ScalaActivityJavaTest {
 
+    @Rule
+    public ActivityTestRule<Lib1ScalaActivity> activityTestRule = new ActivityTestRule<>(Lib1ScalaActivity.class);
+
+    @Test
     public void test1() {
-        assertTrue(true);
+        Assert.assertTrue(true);
     }
 
+    @Test
     public void test2() {
-        assertEquals("Lib1Java", ((TextView) getActivity().findViewById(R.id.scala_text_view)).getText());
+        Assert.assertEquals("Lib1Java", ((TextView) activityTestRule.getActivity().findViewById(R.id.scala_text_view)).getText());
     }
 }

@@ -40,10 +40,10 @@ public class AndroidScalaPluginIntegrationTestTask extends DefaultTask {
         ].each { projectName, runOnTravis ->
             def gradleArgs = ["clean", "test", "connectedCheck", "uninstallAll"]
             [
-                    [GRADLE_VERSION, true, "2.11.7", ANDROID_GRADLE_PLUGIN_VERSION, "android-22", ANDROID_BUILD_TOOLS_VERSION, "8", "23"],
-                    [GRADLE_VERSION, false, "2.10.5", ANDROID_GRADLE_PLUGIN_VERSION, "android-22", ANDROID_BUILD_TOOLS_VERSION, "8", "23"],
-                    [GRADLE_VERSION, false, "2.11.7", ANDROID_GRADLE_PLUGIN_VERSION, "android-22", ANDROID_BUILD_TOOLS_VERSION, "21", "23"],
-                    [GRADLE_VERSION, false, "2.10.5", ANDROID_GRADLE_PLUGIN_VERSION, "android-22", ANDROID_BUILD_TOOLS_VERSION, "21", "23"],
+                    [GRADLE_VERSION, true, "2.11.7", ANDROID_GRADLE_PLUGIN_VERSION, "android-28", ANDROID_BUILD_TOOLS_VERSION, "9", "28"],
+                    [GRADLE_VERSION, false, "2.10.5", ANDROID_GRADLE_PLUGIN_VERSION, "android-28", ANDROID_BUILD_TOOLS_VERSION, "9", "28"],
+                    [GRADLE_VERSION, false, "2.11.7", ANDROID_GRADLE_PLUGIN_VERSION, "android-28", ANDROID_BUILD_TOOLS_VERSION, "21", "28"],
+                    [GRADLE_VERSION, false, "2.10.5", ANDROID_GRADLE_PLUGIN_VERSION, "android-28", ANDROID_BUILD_TOOLS_VERSION, "21", "28"],
             ].each { testParameters ->
                 if (!travis || (runOnTravis && testParameters[1])) {
                     def gradleVersion = testParameters[0]

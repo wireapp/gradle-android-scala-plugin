@@ -176,7 +176,7 @@ android {
 dependencies {
     implementation "org.scala-lang:scala-library:2.11.7"
     implementation "com.android.support:multidex:1.0.2"
-    androidTestImplementation "com.android.support:multidex-instrumentation:1.0.2", { exclude module: "multidex" }
+    androidTestImplementation "junit:junit:4.12"
 }
 ```
 
@@ -293,7 +293,7 @@ android {
         }
 
         prod {
-            minSdkVersion 8
+            minSdkVersion 9
         }
     }
 
@@ -315,7 +315,7 @@ android {
 dependencies {
     implementation "org.scala-lang:scala-library:2.11.7"
     implementation "com.android.support:multidex:1.0.2"
-    androidTestImplementation "com.android.support:multidex-instrumentation:1.0.2", { exclude module: "multidex" }
+    androidTestImplementation "junit:junit:4.12"
 }
 
 tasks.withType(ScalaCompile) {

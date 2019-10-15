@@ -42,7 +42,7 @@ android {
         }
 
         prod {
-            minSdkVersion 8
+            minSdkVersion 9
         }
     }
 }
