@@ -26,6 +26,6 @@ android {
 }
 
 dependencies {
-    compile project(":lib")
-    androidTestCompile "org.scala-lang:scala-library:$scalaLibraryVersion"
+    implementation project(":lib")
+    androidTestImplementation "org.scala-lang:scala-library:$scalaLibraryVersion"
 }

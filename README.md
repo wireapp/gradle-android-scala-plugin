@@ -63,7 +63,7 @@ The plugin decides scala language version using scala-library's version.
 `build.gradle`
 ```groovy
 dependencies {
-    compile "org.scala-lang:scala-library:2.11.7"
+    implementation "org.scala-lang:scala-library:2.11.7"
 }
 ```
 
@@ -145,8 +145,8 @@ android {
 }
 
 dependencies {
-    compile "org.scala-lang:scala-library:2.11.7"
-    compile "com.android.support:multidex:1.0.2"
+    implementation "org.scala-lang:scala-library:2.11.7"
+    implementation "com.android.support:multidex:1.0.2"
 }
 ```
 
@@ -174,9 +174,9 @@ android {
 }
 
 dependencies {
-    compile "org.scala-lang:scala-library:2.11.7"
-    compile "com.android.support:multidex:1.0.2"
-    androidTestCompile "com.android.support:multidex-instrumentation:1.0.2", { exclude module: "multidex" }
+    implementation "org.scala-lang:scala-library:2.11.7"
+    implementation "com.android.support:multidex:1.0.2"
+    androidTestImplementation "com.android.support:multidex-instrumentation:1.0.2", { exclude module: "multidex" }
 }
 ```
 
@@ -313,9 +313,9 @@ android {
 }
 
 dependencies {
-    compile "org.scala-lang:scala-library:2.11.7"
-    compile "com.android.support:multidex:1.0.2"
-    androidTestCompile "com.android.support:multidex-instrumentation:1.0.2", { exclude module: "multidex" }
+    implementation "org.scala-lang:scala-library:2.11.7"
+    implementation "com.android.support:multidex:1.0.2"
+    androidTestImplementation "com.android.support:multidex-instrumentation:1.0.2", { exclude module: "multidex" }
 }
 
 tasks.withType(ScalaCompile) {

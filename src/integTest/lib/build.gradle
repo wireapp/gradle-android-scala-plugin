@@ -42,10 +42,10 @@ android {
 }
 
 dependencies {
-    compile "org.scala-lang:scala-library:$scalaLibraryVersion"
-    //compile "org.scalaz:scalaz-core_$scalaDependencyVersion:7.0.6"
-    compile "com.android.support:multidex:1.0.2"
-    androidTestCompile "com.android.support:multidex-instrumentation:1.0.2", { exclude module: "multidex" }
+    implementation "org.scala-lang:scala-library:$scalaLibraryVersion"
+    //implementation "org.scalaz:scalaz-core_$scalaDependencyVersion:7.0.6"
+    implementation "com.android.support:multidex:1.0.2"
+    androidTestImplementation "com.android.support:multidex-instrumentation:1.0.2", { exclude module: "multidex" }
 }
 
 tasks.withType(ScalaCompile) {

@@ -28,9 +28,9 @@ android {
 }
 
 dependencies {
-    compile "com.android.support:multidex:1.0.2"
-    androidTestCompile "com.android.support:multidex-instrumentation:1.0.2", { exclude module: "multidex" }
-    androidTestCompile "org.scala-lang:scala-library:$scalaLibraryVersion"
+    implementation "com.android.support:multidex:1.0.2"
+    androidTestImplementation "com.android.support:multidex-instrumentation:1.0.2", { exclude module: "multidex" }
+    androidTestImplementation "org.scala-lang:scala-library:$scalaLibraryVersion"
 
     // to break 65535 method limitation
     //androidTestCompile "org.scalaz:scalaz-core_$scalaDependencyVersion:7.0.6"

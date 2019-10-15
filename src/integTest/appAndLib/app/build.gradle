@@ -23,10 +23,10 @@ android {
 }
 
 dependencies {
-    compile "org.scala-lang:scala-library:$scalaLibraryVersion"
-    compile 'com.android.support:multidex:1.0.2'
-    compile project(":lib")
-    androidTestCompile "com.android.support:multidex-instrumentation:1.0.2", { exclude module: "multidex" }
+    implementation "org.scala-lang:scala-library:$scalaLibraryVersion"
+    implementation 'com.android.support:multidex:1.0.2'
+    implementation project(":lib")
+    androidTestImplementation "com.android.support:multidex-instrumentation:1.0.2", { exclude module: "multidex" }
 }
 
 tasks.withType(ScalaCompile) {

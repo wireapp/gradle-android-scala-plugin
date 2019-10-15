@@ -54,8 +54,8 @@ def AAVersion = "3.2"
 
 dependencies {
     annotationProcessor "org.androidannotations:androidannotations:$AAVersion"
-    compile "org.androidannotations:androidannotations-api:$AAVersion"
-    compile "org.scala-lang:scala-library:$scalaLibraryVersion"
-    compile "com.android.support:multidex:1.0.2"
-    androidTestCompile "com.android.support:multidex-instrumentation:1.0.2", { exclude module: "multidex" }
+    implementation "org.androidannotations:androidannotations-api:$AAVersion"
+    implementation "org.scala-lang:scala-library:$scalaLibraryVersion"
+    implementation "com.android.support:multidex:1.0.2"
+    androidTestImplementation "com.android.support:multidex-instrumentation:1.0.2", { exclude module: "multidex" }
 }
