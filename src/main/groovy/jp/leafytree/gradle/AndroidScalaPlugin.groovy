@@ -60,7 +60,7 @@ public class AndroidScalaPlugin implements Plugin<Project> {
     /**
      * Registers the plugin to current project.
      *
-     * @param project currnet project
+     * @param project current project
      * @param androidExtension extension of Android Plugin
      */
     void apply(Project project, Object androidExtension) {

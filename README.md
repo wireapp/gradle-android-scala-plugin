@@ -41,9 +41,16 @@ please try [android-scala-plugin-1.3.2](https://github.com/saturday06/gradle-and
 `build.gradle`
 ```groovy
 buildscript {
+    
+    repositories {
+        maven {
+            url "https://dl.bintray.com/wire-android/third-party"
+        }
+    }   
+
     dependencies {
         classpath "com.android.tools.build:gradle:3.2.1"
-        classpath "jp.leafytree.gradle:gradle-android-scala-plugin:1.6-SNAPSHOT"
+        classpath "com.wire.gradle:gradle-android-scala-plugin:1.6"
     }
 }
 ```
@@ -258,11 +265,14 @@ http://www.gradle.org/docs/current/dsl/org.gradle.api.tasks.scala.ScalaCompileOp
 buildscript {
     repositories {
         mavenCentral()
+        maven {
+            url "https://dl.bintray.com/wire-android/third-party"
+        }
     }
 
     dependencies {
         classpath "com.android.tools.build:gradle:3.2.1"
-        classpath "jp.leafytree.gradle:gradle-android-scala-plugin:1.6-SNAPSHOT"
+        classpath "com.wire.gradle:gradle-android-scala-plugin:1.6"
     }
 }
 
