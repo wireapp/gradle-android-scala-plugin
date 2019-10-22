@@ -1,6 +1,6 @@
 language: java
-jdk: oraclejdk7
-sudo: false
+#jdk: oraclejdk7
+dist: trusty
 addons:
   apt:
     packages:
