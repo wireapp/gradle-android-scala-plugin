@@ -4,15 +4,17 @@ buildscript {
         maven {
             url snaphotRepositoryUrl
         }
+        google()
     }
     dependencies {
         classpath "com.android.tools.build:gradle:$androidPluginVersion"
-        classpath "jp.leafytree.gradle:gradle-android-scala-plugin:$androidScalaPluginVersion"
+        classpath "com.wire.gradle:gradle-android-scala-plugin:$androidScalaPluginVersion"
     }
 }
 
 repositories {
     jcenter()
+    google()
 }
 
 apply plugin: "com.android.library"
@@ -25,7 +27,7 @@ android {
     defaultConfig {
         minSdkVersion Integer.decode(androidPluginMinSdkVersion)
         targetSdkVersion Integer.decode(androidPluginTargetSdkVersion)
-        testInstrumentationRunner "com.android.test.runner.MultiDexTestRunner"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
@@ -40,10 +42,12 @@ android {
 }
 
 dependencies {
-    compile "org.scala-lang:scala-library:$scalaLibraryVersion"
-    //compile "org.scalaz:scalaz-core_$scalaDependencyVersion:7.0.6"
-    compile "com.android.support:multidex:1.0.1"
-    androidTestCompile "com.android.support:multidex-instrumentation:1.0.1", { exclude module: "multidex" }
+    implementation "org.scala-lang:scala-library:$scalaLibraryVersion"
+    //implementation "org.scalaz:scalaz-core_$scalaDependencyVersion:7.0.6"
+    implementation "com.android.support:multidex:1.0.2"
+    androidTestImplementation "junit:junit:4.12"
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test:rules:1.0.2'
 }
 
 tasks.withType(ScalaCompile) {

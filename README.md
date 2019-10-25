@@ -27,6 +27,7 @@ See also sample projects at https://github.com/saturday06/gradle-android-scala-p
 
 | Scala  | Gradle | Android Plugin      | compileSdkVersion | buildToolsVersion |
 | ------ | ------ | ------------------- | ----------------- | ----------------- |
+| 2.11.7 | 4.10.2 | 3.2.1               | 21, 22, 23        | 21.1.2, 22.0.1    |
 | 2.11.7 | 2.2.1  | 1.1.3, 1.2.3, 1.3.1 | 21, 22, 23        | 21.1.2, 22.0.1    |
 | 2.10.5 | 2.2.1  | 1.1.3, 1.2.3, 1.3.1 | 21, 22, 23        | 21.1.2, 22.0.1    |
 
@@ -40,9 +41,16 @@ please try [android-scala-plugin-1.3.2](https://github.com/saturday06/gradle-and
 `build.gradle`
 ```groovy
 buildscript {
+    
+    repositories {
+        maven {
+            url "https://dl.bintray.com/wire-android/third-party"
+        }
+    }   
+
     dependencies {
-        classpath "com.android.tools.build:gradle:1.3.1"
-        classpath "jp.leafytree.gradle:gradle-android-scala-plugin:1.4"
+        classpath "com.android.tools.build:gradle:3.2.1"
+        classpath "com.wire.gradle:gradle-android-scala-plugin:1.6"
     }
 }
 ```
@@ -62,7 +70,7 @@ The plugin decides scala language version using scala-library's version.
 `build.gradle`
 ```groovy
 dependencies {
-    compile "org.scala-lang:scala-library:2.11.7"
+    implementation "org.scala-lang:scala-library:2.11.7"
 }
 ```
 
@@ -144,8 +152,8 @@ android {
 }
 
 dependencies {
-    compile "org.scala-lang:scala-library:2.11.7"
-    compile "com.android.support:multidex:1.0.1"
+    implementation "org.scala-lang:scala-library:2.11.7"
+    implementation "com.android.support:multidex:1.0.2"
 }
 ```
 
@@ -173,9 +181,9 @@ android {
 }
 
 dependencies {
-    compile "org.scala-lang:scala-library:2.11.7"
-    compile "com.android.support:multidex:1.0.1"
-    androidTestCompile "com.android.support:multidex-instrumentation:1.0.1", { exclude module: "multidex" }
+    implementation "org.scala-lang:scala-library:2.11.7"
+    implementation "com.android.support:multidex:1.0.2"
+    androidTestImplementation "junit:junit:4.12"
 }
 ```
 
@@ -257,11 +265,14 @@ http://www.gradle.org/docs/current/dsl/org.gradle.api.tasks.scala.ScalaCompileOp
 buildscript {
     repositories {
         mavenCentral()
+        maven {
+            url "https://dl.bintray.com/wire-android/third-party"
+        }
     }
 
     dependencies {
-        classpath "com.android.tools.build:gradle:1.3.1"
-        classpath "jp.leafytree.gradle:gradle-android-scala-plugin:1.4"
+        classpath "com.android.tools.build:gradle:3.2.1"
+        classpath "com.wire.gradle:gradle-android-scala-plugin:1.6"
     }
 }
 
@@ -284,13 +295,15 @@ android {
         multiDexEnabled true
     }
 
+    flavorDimensions "default"
+
     productFlavors {
         dev {
             minSdkVersion 21 // To reduce compilation time
         }
 
         prod {
-            minSdkVersion 8
+            minSdkVersion 9
         }
     }
 
@@ -310,9 +323,9 @@ android {
 }
 
 dependencies {
-    compile "org.scala-lang:scala-library:2.11.7"
-    compile "com.android.support:multidex:1.0.1"
-    androidTestCompile "com.android.support:multidex-instrumentation:1.0.1", { exclude module: "multidex" }
+    implementation "org.scala-lang:scala-library:2.11.7"
+    implementation "com.android.support:multidex:1.0.2"
+    androidTestImplementation "junit:junit:4.12"
 }
 
 tasks.withType(ScalaCompile) {

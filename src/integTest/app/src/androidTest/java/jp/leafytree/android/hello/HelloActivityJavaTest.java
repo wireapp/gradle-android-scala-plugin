@@ -1,27 +1,36 @@
 package jp.leafytree.android.hello;
 
-import android.test.ActivityInstrumentationTestCase2;
 import android.widget.TextView;
 
 import scala.collection.concurrent.TrieMap;
+import android.support.test.rule.ActivityTestRule;
+import android.support.test.runner.AndroidJUnit4;
+import org.junit.Assert;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
-public class HelloActivityJavaTest extends ActivityInstrumentationTestCase2<HelloActivity> {
-    @SuppressWarnings("deprecation")
-    public HelloActivityJavaTest() {
-        super("jp.leafytree.android.hello", HelloActivity.class);
-    }
+@RunWith(AndroidJUnit4.class)
+public class HelloActivityJavaTest {
 
+    @Rule
+    public ActivityTestRule<HelloActivity> activityTestRule = new ActivityTestRule<>(HelloActivity.class);
+
+    @Test
     public void testSimpleAssertion() {
-        assertTrue(true);
+        Assert.assertTrue(true);
     }
 
+    @Test
     public void testSimpleActivityAssertion() {
-        assertEquals(new HelloJava().say() + "\n" + new HelloScala().say(), ((TextView) getActivity().findViewById(R.id.scala_text_view)).getText());
+        Assert.assertEquals(new HelloJava().say() + "\n" + new HelloScala().say(),
+                ((TextView) activityTestRule.getActivity().findViewById(R.id.scala_text_view)).getText());
     }
 
+    @Test
     public void testCallScalaLibraryClassOfNotUsedByMainApp() {
         TrieMap<String, String> map = new TrieMap<String, String>();
         map.put("x", new HelloJava().say() + "\n" + new HelloScala().say());
-        assertEquals(map.apply("x"), ((TextView) getActivity().findViewById(R.id.scala_text_view)).getText());
+        Assert.assertEquals(map.apply("x"), ((TextView) activityTestRule.getActivity().findViewById(R.id.scala_text_view)).getText());
     }
 }

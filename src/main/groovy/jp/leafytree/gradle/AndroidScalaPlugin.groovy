@@ -28,6 +28,7 @@ import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.internal.file.collections.DefaultDirectoryFileTreeFactory
 import org.gradle.api.internal.tasks.DefaultScalaSourceSet
 import org.gradle.api.tasks.scala.ScalaCompile
+import org.gradle.api.tasks.scala.ScalaCompileOptions
 import org.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
@@ -59,7 +60,7 @@ public class AndroidScalaPlugin implements Plugin<Project> {
     /**
      * Registers the plugin to current project.
      *
-     * @param project currnet project
+     * @param project current project
      * @param androidExtension extension of Android Plugin
      */
     void apply(Project project, Object androidExtension) {
@@ -94,8 +95,11 @@ public class AndroidScalaPlugin implements Plugin<Project> {
             FileUtils.forceMkdir(workDir)
         }
 
-        project.tasks.withType(ScalaCompile) {
-            scalaCompileOptions.useAnt = false
+        project.dependencies {
+            ScalaCompileOptions.metaClass.daemonServer = true
+            ScalaCompileOptions.metaClass.fork = true
+            ScalaCompileOptions.metaClass.useAnt = false
+            ScalaCompileOptions.metaClass.useCompileDaemon = false
         }
     }
 

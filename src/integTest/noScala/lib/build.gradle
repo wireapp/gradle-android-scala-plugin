@@ -19,3 +19,7 @@ android {
         javaMaxHeapSize "2g"
     }
 }
+
+dependencies {
+    androidTestImplementation "junit:junit:4.12"
+}

@@ -21,9 +21,9 @@ import org.gradle.api.tasks.TaskAction
 
 public class AndroidScalaPluginIntegrationTestTask extends DefaultTask {
 
-    static def GRADLE_VERSION = "2.12"
-    static def ANDROID_GRADLE_PLUGIN_VERSION = "2.1.0"
-    static def ANDROID_BUILD_TOOLS_VERSION = "23.0.3"
+    static def GRADLE_VERSION = "4.10.2"
+    static def ANDROID_GRADLE_PLUGIN_VERSION = "3.2.1"
+    static def ANDROID_BUILD_TOOLS_VERSION = "28.0.3"
 
     @TaskAction
     def run() {
@@ -40,15 +40,15 @@ public class AndroidScalaPluginIntegrationTestTask extends DefaultTask {
         ].each { projectName, runOnTravis ->
             def gradleArgs = ["clean", "test", "connectedCheck", "uninstallAll"]
             [
-                    [GRADLE_VERSION, true, "2.11.7", ANDROID_GRADLE_PLUGIN_VERSION, "android-22", ANDROID_BUILD_TOOLS_VERSION, "8", "23"],
-                    [GRADLE_VERSION, false, "2.10.5", ANDROID_GRADLE_PLUGIN_VERSION, "android-22", ANDROID_BUILD_TOOLS_VERSION, "8", "23"],
-                    [GRADLE_VERSION, false, "2.11.7", ANDROID_GRADLE_PLUGIN_VERSION, "android-22", ANDROID_BUILD_TOOLS_VERSION, "21", "23"],
-                    [GRADLE_VERSION, false, "2.10.5", ANDROID_GRADLE_PLUGIN_VERSION, "android-22", ANDROID_BUILD_TOOLS_VERSION, "21", "23"],
+                    [GRADLE_VERSION, true, "2.11.7", ANDROID_GRADLE_PLUGIN_VERSION, "android-28", ANDROID_BUILD_TOOLS_VERSION, "9", "28"],
+                    [GRADLE_VERSION, false, "2.10.5", ANDROID_GRADLE_PLUGIN_VERSION, "android-28", ANDROID_BUILD_TOOLS_VERSION, "9", "28"],
+                    [GRADLE_VERSION, false, "2.11.7", ANDROID_GRADLE_PLUGIN_VERSION, "android-28", ANDROID_BUILD_TOOLS_VERSION, "21", "28"],
+                    [GRADLE_VERSION, false, "2.10.5", ANDROID_GRADLE_PLUGIN_VERSION, "android-28", ANDROID_BUILD_TOOLS_VERSION, "21", "28"],
             ].each { testParameters ->
                 if (!travis || (runOnTravis && testParameters[1])) {
                     def gradleVersion = testParameters[0]
                     def gradleWrapperProperties = getGradleWrapperProperties(gradleVersion)
-                    def gradleProperties = getGradleProperties(testParameters.drop(2))
+                    def gradleProperties = getGradleProperties(testParameters[2], testParameters[3], testParameters[4], testParameters[5], testParameters[6], testParameters[7])
                     println "Test $gradleArgs GRADLE_VERSION:$gradleVersion $gradleProperties"
                     runProject(projectName, gradleArgs, gradleWrapperProperties, gradleProperties)
                 }
@@ -78,7 +78,7 @@ public class AndroidScalaPluginIntegrationTestTask extends DefaultTask {
                 snaphotRepositoryUrl: snaphotRepositoryUrl,
                 scalaLibraryVersion: scalaLibraryVersion,
                 scalaDependencyVersion: scalaLibraryVersion.split("\\.").take(2).join("."),
-                androidScalaPluginVersion: "1.5-SNAPSHOT",
+                androidScalaPluginVersion: "1.6",
                 androidPluginVersion: androidPluginVersion,
                 androidPluginCompileSdkVersion: androidPluginCompileSdkVersion,
                 androidPluginBuildToolsVersion: androidPluginBuildToolsVersion,
