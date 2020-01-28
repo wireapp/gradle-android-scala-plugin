@@ -31,10 +31,6 @@ buildscript {
         google()
         jcenter()
     }
-//
-//    dependencies {
-//        classpath 'com.android.tools.build:gradle:3.5.2'
-//    }
 }
 
 dependencies {
@@ -42,11 +38,6 @@ dependencies {
     implementation localGroovy()
     implementation "commons-io:commons-io:2.4"
     implementation "com.google.guava:guava:17.0"
-
-//    compile "com.android.tools:sdklib:25.3.3"
-//    compile "com.android.tools:sdk-common:25.3.3"
-//    compile "com.android.tools:common:25.3.3"
-//    compile "com.android.tools.build:gradle:3.5.2"
 
     testImplementation "com.android.tools.build:gradle:3.5.2"
     testImplementation "org.scala-lang:scala-compiler:2.11.7"

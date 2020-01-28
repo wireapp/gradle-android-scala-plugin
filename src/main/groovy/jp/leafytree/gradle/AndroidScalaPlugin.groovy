@@ -23,17 +23,15 @@ import org.gradle.api.Project
 import org.gradle.api.ProjectConfigurationException
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
-import org.gradle.api.internal.file.DefaultSourceDirectorySetFactory
 import org.gradle.api.internal.file.FileResolver
-import org.gradle.api.internal.file.collections.DefaultDirectoryFileTreeFactory
 import org.gradle.api.internal.tasks.DefaultScalaSourceSet
-import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.scala.ScalaCompile
 import org.gradle.api.tasks.scala.ScalaCompileOptions
 import org.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 import java.util.concurrent.atomic.AtomicReference
+
 /**
  * AndroidScalaPlugin adds scala language support to official gradle android plugin.
  */
@@ -178,19 +176,11 @@ public class AndroidScalaPlugin implements Plugin<Project> {
             }
             def include = "**/*.scala"
             sourceSet.java.filter.include(include);
-
-            def sourceDirectorySet = SourceDirectorySet
-//            def dirSetFactory = new DefaultSourceDirectorySetFactory(fileResolver, new DefaultDirectoryFileTreeFactory())
-            def dirSetFactory = new DefaultSourceDirectorySetFactory()
-
-            def objectFactory = project.getObjects()
-
-//            sourceSet.convention.plugins.scala = new DefaultScalaSourceSet(sourceSet.name + "_AndroidScalaPlugin", dirSetFactory)
-            sourceSet.convention.plugins.scala = new DefaultScalaSourceSet(sourceSet.name + "_AndroidScalaPlugin", objectFactory)
+            sourceSet.convention.plugins.scala = new DefaultScalaSourceSet(sourceSet.name + "_AndroidScalaPlugin", project.getObjects())
 
             def scala = sourceSet.scala
-
             scala.filter.include(include);
+
             def scalaSrcDir = ["src", sourceSet.name, "scala"].join(File.separator)
             scala.srcDir(scalaSrcDir)
             sourceDirectorySetMap[sourceSet.name] = scala
@@ -233,18 +223,7 @@ public class AndroidScalaPlugin implements Plugin<Project> {
         scalaCompileTask.sourceCompatibility = javaCompileTask.sourceCompatibility
         scalaCompileTask.targetCompatibility = javaCompileTask.targetCompatibility
         scalaCompileTask.scalaCompileOptions.encoding = javaCompileTask.options.encoding
-
-
-//        scalaCompileTask.classpath = javaCompileTask.classpath + project.files(androidPlugin.androidBuilder.getBootClasspath(false))
-//        scalaCompileTask.classpath = javaCompileTask.classpath + project.files(androidPlugin.getRuntimeJarList())
-//        scalaCompileTask.classpath = javaCompileTask.classpath + project.files(androidPlugin.getAndroidBuilder(variant).getBootClasspath(androidPlugin.sdkParser))
-
-
-//        scalaCompileTask.classpath = javaCompileTask.classpath + project.files(com.android.builder.AndroidBuilder.getBootClasspath(androidPlugin.sdkParser))
-//        scalaCompileTask.classpath = javaCompileTask.classpath + project.files(com.android.builder.AndroidBuilder.getBootClasspath(androidPlugin.sdkParser))
         scalaCompileTask.classpath = javaCompileTask.classpath + project.files(androidPlugin.extension.bootClasspath)
-
-
 
         scalaCompileTask.scalaClasspath = compilerConfiguration.asFileTree
         scalaCompileTask.zincClasspath = zincConfiguration.asFileTree
