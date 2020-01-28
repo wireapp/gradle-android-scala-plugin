@@ -22,14 +22,12 @@ apply plugin: "idea"
 repositories {
     mavenCentral()
     google()
-    jcenter()
 }
 
 buildscript {
     repositories {
         mavenCentral()
         google()
-        jcenter()
     }
 }
 
