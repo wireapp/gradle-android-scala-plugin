@@ -22,13 +22,19 @@ apply plugin: "idea"
 repositories {
     mavenCentral()
     google()
+    jcenter()
 }
 
 buildscript {
     repositories {
         mavenCentral()
         google()
+        jcenter()
     }
+//
+//    dependencies {
+//        classpath 'com.android.tools.build:gradle:3.5.2'
+//    }
 }
 
 dependencies {
@@ -37,14 +43,19 @@ dependencies {
     implementation "commons-io:commons-io:2.4"
     implementation "com.google.guava:guava:17.0"
 
-    testImplementation "com.android.tools.build:gradle:3.2.1"
+//    compile "com.android.tools:sdklib:25.3.3"
+//    compile "com.android.tools:sdk-common:25.3.3"
+//    compile "com.android.tools:common:25.3.3"
+//    compile "com.android.tools.build:gradle:3.5.2"
+
+    testImplementation "com.android.tools.build:gradle:3.5.2"
     testImplementation "org.scala-lang:scala-compiler:2.11.7"
     testImplementation "junit:junit:4.12"
 }
 
 description "Gradle Android Scala Plugin adds scala language support to official gradle android plugin."
 group = "com.wire.gradle"
-version = "1.6"
+version = "1.7"
 sourceCompatibility = JavaVersion.VERSION_1_6
 targetCompatibility = JavaVersion.VERSION_1_6
 

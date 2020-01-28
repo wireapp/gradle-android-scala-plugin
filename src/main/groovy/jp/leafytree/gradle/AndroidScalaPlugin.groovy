@@ -27,6 +27,7 @@ import org.gradle.api.internal.file.DefaultSourceDirectorySetFactory
 import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.internal.file.collections.DefaultDirectoryFileTreeFactory
 import org.gradle.api.internal.tasks.DefaultScalaSourceSet
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.scala.ScalaCompile
 import org.gradle.api.tasks.scala.ScalaCompileOptions
 import org.gradle.util.ConfigureUtil
@@ -177,8 +178,16 @@ public class AndroidScalaPlugin implements Plugin<Project> {
             }
             def include = "**/*.scala"
             sourceSet.java.filter.include(include);
-            def dirSetFactory = new DefaultSourceDirectorySetFactory(fileResolver, new DefaultDirectoryFileTreeFactory())
-            sourceSet.convention.plugins.scala = new DefaultScalaSourceSet(sourceSet.name + "_AndroidScalaPlugin", dirSetFactory)
+
+            def sourceDirectorySet = SourceDirectorySet
+//            def dirSetFactory = new DefaultSourceDirectorySetFactory(fileResolver, new DefaultDirectoryFileTreeFactory())
+            def dirSetFactory = new DefaultSourceDirectorySetFactory()
+
+            def objectFactory = project.getObjects()
+
+//            sourceSet.convention.plugins.scala = new DefaultScalaSourceSet(sourceSet.name + "_AndroidScalaPlugin", dirSetFactory)
+            sourceSet.convention.plugins.scala = new DefaultScalaSourceSet(sourceSet.name + "_AndroidScalaPlugin", objectFactory)
+
             def scala = sourceSet.scala
 
             scala.filter.include(include);
@@ -224,7 +233,19 @@ public class AndroidScalaPlugin implements Plugin<Project> {
         scalaCompileTask.sourceCompatibility = javaCompileTask.sourceCompatibility
         scalaCompileTask.targetCompatibility = javaCompileTask.targetCompatibility
         scalaCompileTask.scalaCompileOptions.encoding = javaCompileTask.options.encoding
-        scalaCompileTask.classpath = javaCompileTask.classpath + project.files(androidPlugin.androidBuilder.getBootClasspath(false))
+
+
+//        scalaCompileTask.classpath = javaCompileTask.classpath + project.files(androidPlugin.androidBuilder.getBootClasspath(false))
+//        scalaCompileTask.classpath = javaCompileTask.classpath + project.files(androidPlugin.getRuntimeJarList())
+//        scalaCompileTask.classpath = javaCompileTask.classpath + project.files(androidPlugin.getAndroidBuilder(variant).getBootClasspath(androidPlugin.sdkParser))
+
+
+//        scalaCompileTask.classpath = javaCompileTask.classpath + project.files(com.android.builder.AndroidBuilder.getBootClasspath(androidPlugin.sdkParser))
+//        scalaCompileTask.classpath = javaCompileTask.classpath + project.files(com.android.builder.AndroidBuilder.getBootClasspath(androidPlugin.sdkParser))
+        scalaCompileTask.classpath = javaCompileTask.classpath + project.files(androidPlugin.extension.bootClasspath)
+
+
+
         scalaCompileTask.scalaClasspath = compilerConfiguration.asFileTree
         scalaCompileTask.zincClasspath = zincConfiguration.asFileTree
         scalaCompileTask.scalaCompileOptions.incrementalOptions.analysisFile = new File(variantWorkDir, "analysis.txt")

@@ -21,9 +21,9 @@ import org.gradle.api.tasks.TaskAction
 
 public class AndroidScalaPluginIntegrationTestTask extends DefaultTask {
 
-    static def GRADLE_VERSION = "4.10.2"
-    static def ANDROID_GRADLE_PLUGIN_VERSION = "3.2.1"
-    static def ANDROID_BUILD_TOOLS_VERSION = "28.0.3"
+    static def GRADLE_VERSION = "5.6.4"
+    static def ANDROID_GRADLE_PLUGIN_VERSION = "3.5.2"
+    static def ANDROID_BUILD_TOOLS_VERSION = "29.0.5"
 
     @TaskAction
     def run() {
@@ -78,7 +78,7 @@ public class AndroidScalaPluginIntegrationTestTask extends DefaultTask {
                 snaphotRepositoryUrl: snaphotRepositoryUrl,
                 scalaLibraryVersion: scalaLibraryVersion,
                 scalaDependencyVersion: scalaLibraryVersion.split("\\.").take(2).join("."),
-                androidScalaPluginVersion: "1.6",
+                androidScalaPluginVersion: "1.7",
                 androidPluginVersion: androidPluginVersion,
                 androidPluginCompileSdkVersion: androidPluginCompileSdkVersion,
                 androidPluginBuildToolsVersion: androidPluginBuildToolsVersion,
