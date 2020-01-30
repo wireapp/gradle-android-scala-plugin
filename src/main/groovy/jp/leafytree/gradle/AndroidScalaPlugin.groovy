@@ -193,7 +193,7 @@ public class AndroidScalaPlugin implements Plugin<Project> {
      * @param task the JavaCompile task
      */
     void addAndroidScalaCompileTask(Object variant) {
-        def javaCompileTask = variant.javaCompile
+        def javaCompileTask = variant.javaCompileProvider.get()
         // To prevent locking classes.jar by JDK6's URLClassLoader
         def libraryClasspath = javaCompileTask.classpath.grep { it.name != "classes.jar" }
         def scalaVersion = scalaVersionFromClasspath(libraryClasspath)
