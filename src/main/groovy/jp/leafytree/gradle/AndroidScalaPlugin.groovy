@@ -237,6 +237,7 @@ public class AndroidScalaPlugin implements Plugin<Project> {
         def javaCompileOriginalDestinationDir = new AtomicReference<File>()
         def javaCompileOriginalSource = new AtomicReference<FileCollection>()
         def javaCompileOriginalOptionsCompilerArgs = new AtomicReference<List<String>>()
+
         javaCompileTask.doFirst {
             // Disable compilation
             javaCompileOriginalDestinationDir.set(javaCompileTask.destinationDir)
@@ -256,6 +257,7 @@ public class AndroidScalaPlugin implements Plugin<Project> {
             javaCompileTask.options.compilerArgs = compilerArgs +  "-proc:none"
         }
         javaCompileTask.outputs.upToDateWhen { false }
+
         javaCompileTask.doLast {
             FileUtils.deleteDirectory(dummyDestinationDir)
             javaCompileTask.destinationDir = javaCompileOriginalDestinationDir.get()
