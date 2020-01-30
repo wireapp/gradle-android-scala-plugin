@@ -15,29 +15,25 @@
  */
 package jp.leafytree.gradle
 
+import com.android.build.gradle.api.AndroidSourceDirectorySet
 import com.google.common.annotations.VisibleForTesting
 import org.apache.commons.io.FileUtils
-import org.codehaus.groovy.runtime.InvokerHelper
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.ProjectConfigurationException
-import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
-import org.gradle.api.internal.file.DefaultSourceDirectorySetFactory
-import org.gradle.api.internal.file.FileResolver
-import org.gradle.api.internal.file.collections.DefaultDirectoryFileTreeFactory
 import org.gradle.api.internal.tasks.DefaultScalaSourceSet
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.scala.ScalaCompile
-import org.gradle.api.tasks.scala.ScalaCompileOptions
 import org.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
-import java.util.concurrent.atomic.AtomicReference
+
 /**
  * AndroidScalaPlugin adds scala language support to official gradle android plugin.
  */
 public class AndroidScalaPlugin implements Plugin<Project> {
-    private final FileResolver fileResolver
+
     @VisibleForTesting
     final Map<String, SourceDirectorySet> sourceDirectorySetMap = new HashMap<>()
     private Project project
@@ -47,14 +43,16 @@ public class AndroidScalaPlugin implements Plugin<Project> {
     private File workDir
     private final AndroidScalaPluginExtension extension = new AndroidScalaPluginExtension()
 
+    private final ObjectFactory objectFactory
+
     /**
      * Creates a new AndroidScalaPlugin with given file resolver.
      *
      * @param fileResolver the FileResolver
      */
     @Inject
-    public AndroidScalaPlugin(FileResolver fileResolver) {
-        this.fileResolver = fileResolver
+    public AndroidScalaPlugin(ObjectFactory objectFactory) {
+        this.objectFactory = objectFactory
     }
 
     /**
@@ -74,17 +72,13 @@ public class AndroidScalaPlugin implements Plugin<Project> {
         }
         this.androidExtension = androidExtension
         this.workDir = new File(project.buildDir, "android-scala")
+
         updateAndroidExtension()
-        updateAndroidSourceSetsExtension()
         androidExtension.buildTypes.whenObjectAdded { updateAndroidSourceSetsExtension() }
         androidExtension.productFlavors.whenObjectAdded { updateAndroidSourceSetsExtension() }
         androidExtension.signingConfigs.whenObjectAdded { updateAndroidSourceSetsExtension() }
 
         project.afterEvaluate {
-            updateAndroidSourceSetsExtension()
-            androidExtension.sourceSets.each { srcSet ->
-                srcSet.java.srcDirs(srcSet.scala.srcDirs)
-            }
             def allVariants = androidExtension.testVariants + androidExtension.unitTestVariants + (isLibrary ? androidExtension.libraryVariants : androidExtension.applicationVariants)
             allVariants.each { variant ->
                 addAndroidScalaCompileTask(variant)
@@ -93,13 +87,6 @@ public class AndroidScalaPlugin implements Plugin<Project> {
 
         project.tasks.findByName("preBuild").doLast {
             FileUtils.forceMkdir(workDir)
-        }
-
-        project.dependencies {
-            ScalaCompileOptions.metaClass.daemonServer = true
-            ScalaCompileOptions.metaClass.fork = true
-            ScalaCompileOptions.metaClass.useAnt = false
-            ScalaCompileOptions.metaClass.useCompileDaemon = false
         }
     }
 
@@ -110,12 +97,12 @@ public class AndroidScalaPlugin implements Plugin<Project> {
      * @param androidExtension extension of Android Plugin
      */
     public void apply(Project project) {
-        if (!["com.android.application", 
-		"android", 
-		"com.android.library", 
-		"android-library",
-		"com.android.model.application",
-		"com.android.model.library"].any { project.plugins.findPlugin(it) }) {
+        if (!["com.android.application",
+              "android",
+              "com.android.library",
+              "android-library",
+              "com.android.model.application",
+              "com.android.model.library"].any { project.plugins.findPlugin(it) }) {
             throw new ProjectConfigurationException("Please apply 'com.android.application' or 'com.android.library' plugin before applying 'android-scala' plugin", null)
         }
         apply(project, project.extensions.getByName("android"))
@@ -177,11 +164,9 @@ public class AndroidScalaPlugin implements Plugin<Project> {
             }
             def include = "**/*.scala"
             sourceSet.java.filter.include(include);
-            def dirSetFactory = new DefaultSourceDirectorySetFactory(fileResolver, new DefaultDirectoryFileTreeFactory())
-            sourceSet.convention.plugins.scala = new DefaultScalaSourceSet(sourceSet.name + "_AndroidScalaPlugin", dirSetFactory)
-            def scala = sourceSet.scala
+            sourceSet.convention.plugins.scala = new DefaultScalaSourceSet(sourceSet.name + "_AndroidScalaPlugin", objectFactory)
 
-            scala.filter.include(include);
+            SourceDirectorySet scala = sourceSet.scala
             def scalaSrcDir = ["src", sourceSet.name, "scala"].join(File.separator)
             scala.srcDir(scalaSrcDir)
             sourceDirectorySetMap[sourceSet.name] = scala
@@ -194,7 +179,9 @@ public class AndroidScalaPlugin implements Plugin<Project> {
      * @param task the JavaCompile task
      */
     void addAndroidScalaCompileTask(Object variant) {
-        def javaCompileTask = variant.javaCompile
+        def javaCompileTask = variant.javaCompileProvider.get()
+        String variantName = variant.name
+
         // To prevent locking classes.jar by JDK6's URLClassLoader
         def libraryClasspath = javaCompileTask.classpath.grep { it.name != "classes.jar" }
         def scalaVersion = scalaVersionFromClasspath(libraryClasspath)
@@ -202,82 +189,72 @@ public class AndroidScalaPlugin implements Plugin<Project> {
             return
         }
         project.logger.info("scala-library version=$scalaVersion detected")
+
         def zincConfigurationName = "androidScalaPluginZincFor" + javaCompileTask.name
         def zincConfiguration = project.configurations.findByName(zincConfigurationName)
         if (!zincConfiguration) {
             zincConfiguration = project.configurations.create(zincConfigurationName)
-            project.dependencies.add(zincConfigurationName, "com.typesafe.zinc:zinc:0.3.7")
+            //  project.dependencies.add(zincConfigurationName,  "org.scala-sbt:zinc_2.11:1.2.1")
+            //  project.dependencies.add(zincConfigurationName,  "org.scala-sbt:zinc_2.12:1.2.5")
+            project.dependencies.add(zincConfigurationName, "com.typesafe.zinc:zinc:0.3.15")
         }
+
         def compilerConfigurationName = "androidScalaPluginScalaCompilerFor" + javaCompileTask.name
         def compilerConfiguration = project.configurations.findByName(compilerConfigurationName)
         if (!compilerConfiguration) {
             compilerConfiguration = project.configurations.create(compilerConfigurationName)
             project.dependencies.add(compilerConfigurationName, "org.scala-lang:scala-compiler:$scalaVersion")
         }
+
         def variantWorkDir = getVariantWorkDir(variant)
-        def scalaCompileTask = project.tasks.create("compile${variant.name.capitalize()}Scala", ScalaCompile)
-        def scalaSources = variant.variantData.variantConfiguration.sortedSourceProviders.inject([]) { acc, val ->
-            acc + val.java.sourceFiles
-        }
-        scalaCompileTask.source = scalaSources
+        ScalaCompile scalaCompileTask = (ScalaCompile) project.tasks.create("compile${variantName.capitalize()}Scala", ScalaCompile)
+
+        def javaSrcDirs = AndroidGradleWrapper.getJavaSources(variant.variantData).collect {
+            if (it instanceof AndroidSourceDirectorySet)
+                it.getSrcDirs()
+            else
+                it
+        }.flatten()
+
+        scalaCompileTask.setSource(javaSrcDirs)
         scalaCompileTask.destinationDir = javaCompileTask.destinationDir
         scalaCompileTask.sourceCompatibility = javaCompileTask.sourceCompatibility
         scalaCompileTask.targetCompatibility = javaCompileTask.targetCompatibility
-        scalaCompileTask.scalaCompileOptions.encoding = javaCompileTask.options.encoding
-        scalaCompileTask.classpath = javaCompileTask.classpath + project.files(androidPlugin.androidBuilder.getBootClasspath(false))
+        scalaCompileTask.scalaCompileOptions.setEncoding(javaCompileTask.options.encoding)
+        scalaCompileTask.classpath = javaCompileTask.classpath + project.files(androidPlugin.extension.bootClasspath)
         scalaCompileTask.scalaClasspath = compilerConfiguration.asFileTree
         scalaCompileTask.zincClasspath = zincConfiguration.asFileTree
-        scalaCompileTask.scalaCompileOptions.incrementalOptions.analysisFile = new File(variantWorkDir, "analysis.txt")
+        scalaCompileTask.scalaCompileOptions.incrementalOptions.analysisFile.set(new File(variantWorkDir, "analysis.txt"))
+
         if (extension.addparams) {
             scalaCompileTask.scalaCompileOptions.additionalParameters = [extension.addparams]
         }
 
-        def dummyDestinationDir = new File(variantWorkDir, "javaCompileDummyDestination") // TODO: More elegant way
-        def dummySourceDir = new File(variantWorkDir, "javaCompileDummySource") // TODO: More elegant way
-        def javaCompileOriginalDestinationDir = new AtomicReference<File>()
-        def javaCompileOriginalSource = new AtomicReference<FileCollection>()
-        def javaCompileOriginalOptionsCompilerArgs = new AtomicReference<List<String>>()
-        javaCompileTask.doFirst {
-            // Disable compilation
-            javaCompileOriginalDestinationDir.set(javaCompileTask.destinationDir)
-            javaCompileOriginalSource.set(javaCompileTask.source)
-            javaCompileTask.destinationDir = dummyDestinationDir
-            if (!dummyDestinationDir.exists()) {
-                FileUtils.forceMkdir(dummyDestinationDir)
-            }
-            def dummySourceFile = new File(dummySourceDir, "Dummy.java")
-            if (!dummySourceFile.exists()) {
-                FileUtils.forceMkdir(dummySourceDir)
-                dummySourceFile.withWriter { it.write("class Dummy{}") }
-            }
-            javaCompileTask.source = [dummySourceFile]
-            def compilerArgs = javaCompileTask.options.compilerArgs
-            javaCompileOriginalOptionsCompilerArgs.set(compilerArgs)
-            javaCompileTask.options.compilerArgs = compilerArgs +  "-proc:none"
-        }
-        javaCompileTask.outputs.upToDateWhen { false }
-        javaCompileTask.doLast {
-            FileUtils.deleteDirectory(dummyDestinationDir)
-            javaCompileTask.destinationDir = javaCompileOriginalDestinationDir.get()
-            javaCompileTask.source = javaCompileOriginalSource.get()
-            javaCompileTask.options.compilerArgs = javaCompileOriginalOptionsCompilerArgs.get()
+        String DevDebug = variantName.capitalize()
+        def processResourcesTask = project.tasks.findByName("process" + DevDebug + "Resources")
 
-            // R.java is appended lazily
-            scalaCompileTask.source = [] + new TreeSet(scalaCompileTask.source.collect { it } + javaCompileTask.source.collect { it }) // unique
-            def noisyProperties = ["compiler", "includeJavaRuntime", "incremental", "optimize", "useAnt"]
-            InvokerHelper.setProperties(scalaCompileTask.options,
-                javaCompileTask.options.properties.findAll { !noisyProperties.contains(it.key) })
-            noisyProperties.each { property ->
-                // Suppress message from deprecated/experimental property as possible
-                if (!javaCompileTask.options.hasProperty(property) || !scalaCompileTask.options.hasProperty(property)) {
-                    return
-                }
-                if (scalaCompileTask.options[property] != javaCompileTask.options[property]) {
-                    scalaCompileTask.options[property] = javaCompileTask.options[property]
-                }
+        scalaCompileTask.dependsOn(project.tasks.getByName("generate" + DevDebug + "Sources"))
+        scalaCompileTask.dependsOn(project.tasks.getByName("pre" + DevDebug + "Build"))
+
+        if (processResourcesTask != null)
+            scalaCompileTask.dependsOn(processResourcesTask)
+
+        javaCompileTask.dependsOn(scalaCompileTask)
+
+        def added = false
+        def file = scalaCompileTask.destinationDir
+
+        javaCompileTask.doFirst {
+            if (!javaCompileTask.classpath.contains(file)) {
+                javaCompileTask.classpath += project.files(file)
+                added = true
             }
-            scalaCompileTask.execute()
-            project.logger.lifecycle(scalaCompileTask.path)
+        }
+
+        javaCompileTask.doLast {
+            if (added) {
+                javaCompileTask.classpath -= project.files(file)
+            }
         }
     }
 }

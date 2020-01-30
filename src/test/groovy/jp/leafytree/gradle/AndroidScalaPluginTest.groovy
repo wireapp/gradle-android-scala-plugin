@@ -52,6 +52,7 @@ class AndroidScalaPluginTest {
         project.apply plugin: "jp.leafytree.android-scala" // never throw Exception
     }
 
+
     def getPlugin() {
         project.apply plugin: "jp.leafytree.android-scala"
         project.plugins.findPlugin(AndroidScalaPlugin.class)
@@ -60,6 +61,7 @@ class AndroidScalaPluginTest {
     @Test
     public void addDefaultScalaMainSourceSetToAndroidPlugin() {
         def plugin = getPlugin()
+        project.android { productFlavors { customFlavor {} } }
         Assert.assertEquals([], plugin.sourceDirectorySetMap["main"].files.toList())
         def src1 = new File(project.file("."), ["src", "main", "scala", "Src1.scala"].join(File.separator))
         src1.parentFile.mkdirs()
@@ -70,8 +72,8 @@ class AndroidScalaPluginTest {
 
     @Test
     public void addCustomFlavorScalaSourceSetToAndroidPlugin() {
-        project.android { productFlavors { customFlavor { } } }
         def plugin = getPlugin()
+        project.android { productFlavors { customFlavor {} } }
         Assert.assertEquals([], plugin.sourceDirectorySetMap["customFlavor"].files.toList())
 
         def src = new File(project.file("."), ["src", "customFlavor", "scala", "Src.scala"].join(File.separator))
@@ -87,8 +89,21 @@ class AndroidScalaPluginTest {
     }
 
     @Test
+    public void addDefaultScalaUnitTestSourceSetToAndroidPlugin() {
+        def plugin = getPlugin()
+        project.android { productFlavors { customFlavor {} } }
+        Assert.assertEquals([], plugin.sourceDirectorySetMap["test"].files.toList())
+        def src1 = new File(project.file("."), ["src", "test", "scala", "Src1Test.scala"].join(File.separator))
+        src1.parentFile.mkdirs()
+        src1.withWriter { it.write("class Src1Test{}") }
+        Assert.assertEquals([], plugin.sourceDirectorySetMap["main"].files.toList())
+        Assert.assertEquals([src1], plugin.sourceDirectorySetMap["test"].files.toList())
+    }
+
+    @Test
     public void addDefaultScalaAndroidTestSourceSetToAndroidPlugin() {
         def plugin = getPlugin()
+        project.android { productFlavors { customFlavor {} } }
         Assert.assertEquals([], plugin.sourceDirectorySetMap["androidTest"].files.toList())
         def src1 = new File(project.file("."), ["src", "androidTest", "scala", "Src1Test.scala"].join(File.separator))
         src1.parentFile.mkdirs()
@@ -100,6 +115,7 @@ class AndroidScalaPluginTest {
     @Test
     public void addCustomScalaMainSourceSetToAndroidPlugin() {
         def plugin = getPlugin()
+        project.android { productFlavors { customFlavor {} } }
         def defaultSrc = new File(project.file("."), ["src", "main", "scala", "Src1.scala"].join(File.separator))
         def customSrc = new File(project.file("."), ["custom", "sourceSet", "Src2.scala"].join(File.separator))
         defaultSrc.parentFile.mkdirs()
@@ -114,6 +130,7 @@ class AndroidScalaPluginTest {
     @Test
     public void addCustomScalaAndroidTestSourceSetToAndroidPlugin() {
         def plugin = getPlugin()
+        project.android { productFlavors { customFlavor {} } }
         def defaultSrc = new File(project.file("."), ["src", "androidTest", "scala", "Src1.scala"].join(File.separator))
         def customSrc = new File(project.file("."), ["custom", "sourceSet", "Src2.scala"].join(File.separator))
         defaultSrc.parentFile.mkdirs()
@@ -128,6 +145,7 @@ class AndroidScalaPluginTest {
     @Test
     public void updateCustomScalaMainSourceSetToAndroidPlugin() {
         def plugin = getPlugin()
+        project.android { productFlavors { customFlavor {} } }
         def customSrc = new File(project.file("."), ["custom", "sourceSet", "Src2.scala"].join(File.separator))
         customSrc.parentFile.mkdirs()
         customSrc.withWriter { it.write("class Src2{}") }
@@ -139,6 +157,7 @@ class AndroidScalaPluginTest {
     @Test
     public void updateCustomScalaAndroidTestSourceSetToAndroidPlugin() {
         def plugin = getPlugin()
+        project.android { productFlavors { customFlavor {} } }
         def customSrc = new File(project.file("."), ["custom", "testSourceSet", "Src1Test.scala"].join(File.separator))
         customSrc.parentFile.mkdirs()
         customSrc.withWriter { it.write("class Src2Test{}") }
@@ -148,19 +167,8 @@ class AndroidScalaPluginTest {
     }
 
     @Test
-    public void updateCustomScalaUnitTestSourceSetToAndroidPlugin() {
-        def plugin = getPlugin()
-        def customSrc = new File(project.file("."), ["custom", "testSourceSet", "Src1Test.scala"].join(File.separator))
-        customSrc.parentFile.mkdirs()
-        customSrc.withWriter { it.write("class Src2Test{}") }
-        project.android { sourceSets { test { scala { srcDirs = ["custom/testSourceSet"] } } } }
-        Assert.assertEquals([], plugin.sourceDirectorySetMap["main"].files.toList().sort())
-        Assert.assertEquals([customSrc], plugin.sourceDirectorySetMap["test"].files.toList().sort())
-    }
-
-    @Test
     public void scalaVersionFromClasspath() {
         def classpath = System.getProperty("java.class.path").split(File.pathSeparator).collect { new File(it) }
-        Assert.assertEquals("2.11.7", AndroidScalaPlugin.scalaVersionFromClasspath(classpath))
+        Assert.assertEquals("2.11.12", AndroidScalaPlugin.scalaVersionFromClasspath(classpath))
     }
 }

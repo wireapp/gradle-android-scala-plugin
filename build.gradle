@@ -20,33 +20,35 @@ apply plugin: "signing"
 apply plugin: "idea"
 
 repositories {
-    mavenCentral()
     google()
+    jcenter()
+    mavenCentral()
 }
 
 buildscript {
     repositories {
+        jcenter()
         mavenCentral()
-        google()
     }
 }
 
 dependencies {
     implementation gradleApi()
     implementation localGroovy()
-    implementation "commons-io:commons-io:2.4"
-    implementation "com.google.guava:guava:17.0"
+    implementation "commons-io:commons-io:2.5"
+    implementation "com.android.tools.build:gradle:3.5.2"
 
-    testImplementation "com.android.tools.build:gradle:3.2.1"
-    testImplementation "org.scala-lang:scala-compiler:2.11.7"
+    testImplementation "com.android.tools.build:gradle:3.5.2"
+    testImplementation "org.scala-lang:scala-compiler:2.11.12"
     testImplementation "junit:junit:4.12"
 }
 
 description "Gradle Android Scala Plugin adds scala language support to official gradle android plugin."
 group = "com.wire.gradle"
-version = "1.6"
-sourceCompatibility = JavaVersion.VERSION_1_6
-targetCompatibility = JavaVersion.VERSION_1_6
+version = "1.7"
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
 
 def uploadToSonatypeRepository = hasProperty("sonatypeUserName")
 
