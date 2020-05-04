@@ -44,7 +44,7 @@ dependencies {
 
 description "Gradle Android Scala Plugin adds scala language support to official gradle android plugin."
 group = "com.wire.gradle"
-version = "1.6"
+version = "2.0.0-SNAPSHOT"
 sourceCompatibility = JavaVersion.VERSION_1_6
 targetCompatibility = JavaVersion.VERSION_1_6
 
