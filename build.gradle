@@ -20,13 +20,13 @@ apply plugin: "signing"
 apply plugin: "idea"
 
 repositories {
-    mavenCentral()
+    jcenter()
     google()
 }
 
 buildscript {
     repositories {
-        mavenCentral()
+        jcenter()
         google()
     }
 }
@@ -37,7 +37,7 @@ dependencies {
     implementation "commons-io:commons-io:2.4"
     implementation "com.google.guava:guava:17.0"
 
-    testImplementation "com.android.tools.build:gradle:3.2.1"
+    testImplementation "com.android.tools.build:gradle:3.6.0"
     testImplementation "org.scala-lang:scala-compiler:2.11.7"
     testImplementation "junit:junit:4.12"
 }
