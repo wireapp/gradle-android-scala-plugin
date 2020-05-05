@@ -49,9 +49,9 @@ public class AndroidScalaPlugin implements Plugin<Project> {
     private final AndroidScalaPluginExtension extension = new AndroidScalaPluginExtension()
 
     /**
-     * Creates a new AndroidScalaPlugin with given file resolver.
+     * Creates a new AndroidScalaPlugin with given objectFactory.
      *
-     * @param fileResolver the FileResolver
+     * @param objectFactory objectFactory
      */
     @Inject
     public AndroidScalaPlugin(ObjectFactory objectFactory) {
