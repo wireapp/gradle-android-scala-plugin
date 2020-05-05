@@ -84,7 +84,7 @@ public class AndroidScalaPlugin implements Plugin<Project> {
         project.afterEvaluate {
             updateAndroidSourceSetsExtension()
             androidExtension.sourceSets.each { srcSet ->
-                srcSet.java.srcDirs(srcSet.scala.srcDirs)
+                srcSet.java.srcDirs(srcSet.scala.srcDirs.toArray())
             }
             def allVariants = androidExtension.testVariants + androidExtension.unitTestVariants + (isLibrary ? androidExtension.libraryVariants : androidExtension.applicationVariants)
             allVariants.each { variant ->
