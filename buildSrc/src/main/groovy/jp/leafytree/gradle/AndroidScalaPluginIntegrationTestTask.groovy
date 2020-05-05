@@ -21,72 +21,66 @@ import org.gradle.api.tasks.TaskAction
 
 public class AndroidScalaPluginIntegrationTestTask extends DefaultTask {
 
-    static def GRADLE_VERSION = "4.10.2"
-    static def ANDROID_GRADLE_PLUGIN_VERSION = "3.2.1"
-    static def ANDROID_BUILD_TOOLS_VERSION = "28.0.3"
+    static def GRADLE_VERSION = "gradleVersion"
+    static def SCALA_VERSION = "scalaVersion"
+    static def ANDROID_GRADLE_PLUGIN_VERSION = "androidGradlePluginVersion"
+    static def ANDROID_PLUGIN_COMPILE_SDK_VERSION = "androidPluginCompileSdkVersion"
+    static def ANDROID_BUILD_TOOLS_VERSION = "androidBuildToolsVersion"
+    static def MIN_SDK_VERSION = "minSdkVersion"
+    static def TARGET_SDK_VERSION = "targetSdkVersion"
+
+    static def buildParameters = [
+        (GRADLE_VERSION)                    : "4.10.2",
+        (SCALA_VERSION)                     : "2.11.7",
+        (ANDROID_GRADLE_PLUGIN_VERSION)     : "3.2.1",
+        (ANDROID_PLUGIN_COMPILE_SDK_VERSION): "android-28",
+        (ANDROID_BUILD_TOOLS_VERSION)       : "28.0.3",
+        (MIN_SDK_VERSION)                   : "21",
+        (TARGET_SDK_VERSION)                : "28"
+    ]
 
     @TaskAction
     def run() {
-        def travis = System.getenv("TRAVIS").toString().toBoolean()
-        [
-                ["app", false],
-                ["lib", false],
-                ["appAndLib", true],
-                ["largeAppAndLib", false],
-                ["noScala", false],
-                ["simpleFlavor", false],
-                ["useScalaOnlyTest", false],
-                ["apt", false],
-        ].each { projectName, runOnTravis ->
+        ["app", "appAndLib", "apt", "largeAppAndLib", "lib", "noScala", "simpleFlavor", "useScalaOnlyTest"].each { projectName ->
             def gradleArgs = ["clean", "test", "connectedCheck", "uninstallAll"]
-            [
-                    [GRADLE_VERSION, true, "2.11.7", ANDROID_GRADLE_PLUGIN_VERSION, "android-28", ANDROID_BUILD_TOOLS_VERSION, "9", "28"],
-                    [GRADLE_VERSION, false, "2.10.5", ANDROID_GRADLE_PLUGIN_VERSION, "android-28", ANDROID_BUILD_TOOLS_VERSION, "9", "28"],
-                    [GRADLE_VERSION, false, "2.11.7", ANDROID_GRADLE_PLUGIN_VERSION, "android-28", ANDROID_BUILD_TOOLS_VERSION, "21", "28"],
-                    [GRADLE_VERSION, false, "2.10.5", ANDROID_GRADLE_PLUGIN_VERSION, "android-28", ANDROID_BUILD_TOOLS_VERSION, "21", "28"],
-            ].each { testParameters ->
-                if (!travis || (runOnTravis && testParameters[1])) {
-                    def gradleVersion = testParameters[0]
-                    def gradleWrapperProperties = getGradleWrapperProperties(gradleVersion)
-                    def gradleProperties = getGradleProperties(testParameters[2], testParameters[3], testParameters[4], testParameters[5], testParameters[6], testParameters[7])
-                    println "Test $gradleArgs GRADLE_VERSION:$gradleVersion $gradleProperties"
-                    runProject(projectName, gradleArgs, gradleWrapperProperties, gradleProperties)
-                }
-            }
+            def gradleVersion = buildParameters[GRADLE_VERSION]
+            def gradleWrapperProperties = getGradleWrapperProperties(gradleVersion)
+            def gradleProperties = getGradleProperties(buildParameters)
+            println "Test $gradleArgs GRADLE_VERSION:$gradleVersion $gradleProperties"
+            runProject(projectName, gradleArgs, gradleWrapperProperties, gradleProperties)
         }
     }
 
-    def getGradleWrapperProperties(gradleVersion) {
+    static def getGradleWrapperProperties(gradleVersion) {
         def gradleWrapperProperties = new Properties()
         gradleWrapperProperties.putAll([
-                distributionBase: "GRADLE_USER_HOME",
-                distributionPath: "wrapper/dists",
-                zipStoreBase: "GRADLE_USER_HOME",
-                zipStorePath: "wrapper/dists",
-                distributionUrl: "http://services.gradle.org/distributions/gradle-" + gradleVersion + "-bin.zip",
+            distributionBase: "GRADLE_USER_HOME",
+            distributionPath: "wrapper/dists",
+            zipStoreBase    : "GRADLE_USER_HOME",
+            zipStorePath    : "wrapper/dists",
+            distributionUrl : "http://services.gradle.org/distributions/gradle-" + gradleVersion + "-bin.zip",
         ])
         gradleWrapperProperties
     }
 
-    def getGradleProperties(scalaLibraryVersion, androidPluginVersion, androidPluginCompileSdkVersion,
-                            androidPluginBuildToolsVersion, androidPluginMinSdkVersion, androidPluginTargetSdkVersion) {
+    def getGradleProperties(Map<String, String> buildParams) {
         // def snaphotRepositoryUrl = "http://saturday06.github.io/gradle-android-scala-plugin/repository/snapshot"
         def snaphotRepositoryUrl = [project.buildFile.parentFile.absolutePath, "gh-pages", "repository", "snapshot"].join(File.separator)
         def gradleProperties = new Properties()
         gradleProperties.putAll([
-                "org.gradle.jvmargs": "-Xmx2048m -XX:MaxPermSize=2048m -XX:+HeapDumpOnOutOfMemoryError",
-                snaphotRepositoryUrl: snaphotRepositoryUrl,
-                scalaLibraryVersion: scalaLibraryVersion,
-                scalaDependencyVersion: scalaLibraryVersion.split("\\.").take(2).join("."),
-                androidScalaPluginVersion: "1.6",
-                androidPluginVersion: androidPluginVersion,
-                androidPluginCompileSdkVersion: androidPluginCompileSdkVersion,
-                androidPluginBuildToolsVersion: androidPluginBuildToolsVersion,
-                androidPluginMinSdkVersion: androidPluginMinSdkVersion,
-                androidPluginTargetSdkVersion: androidPluginTargetSdkVersion,
-                androidPluginIncremental: "false",
-                androidPluginPreDexLibraries: "false",
-                androidPluginJumboMode: "false",
+            "org.gradle.jvmargs"          : "-Xmx2048m -XX:MaxPermSize=2048m -XX:+HeapDumpOnOutOfMemoryError",
+            snaphotRepositoryUrl          : snaphotRepositoryUrl,
+            scalaLibraryVersion           : buildParams[SCALA_VERSION],
+            scalaDependencyVersion        : buildParams[SCALA_VERSION].split("\\.").take(2).join("."),
+            androidScalaPluginVersion     : "2.0.0-SNAPSHOT",
+            androidPluginVersion          : buildParams[ANDROID_GRADLE_PLUGIN_VERSION],
+            androidPluginCompileSdkVersion: buildParams[ANDROID_PLUGIN_COMPILE_SDK_VERSION],
+            androidPluginBuildToolsVersion: buildParams[ANDROID_BUILD_TOOLS_VERSION],
+            androidPluginMinSdkVersion    : buildParams[MIN_SDK_VERSION],
+            androidPluginTargetSdkVersion : buildParams[TARGET_SDK_VERSION],
+            androidPluginIncremental      : "false",
+            androidPluginPreDexLibraries  : "false",
+            androidPluginJumboMode        : "false",
         ])
         gradleProperties
     }
