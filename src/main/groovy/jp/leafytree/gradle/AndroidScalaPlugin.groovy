@@ -34,6 +34,7 @@ import org.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 import java.util.concurrent.atomic.AtomicReference
+
 /**
  * AndroidScalaPlugin adds scala language support to official gradle android plugin.
  */
@@ -111,12 +112,12 @@ public class AndroidScalaPlugin implements Plugin<Project> {
      * @param androidExtension extension of Android Plugin
      */
     public void apply(Project project) {
-        if (!["com.android.application", 
-		"android", 
-		"com.android.library", 
-		"android-library",
-		"com.android.model.application",
-		"com.android.model.library"].any { project.plugins.findPlugin(it) }) {
+        if (!["com.android.application",
+              "android",
+              "com.android.library",
+              "android-library",
+              "com.android.model.application",
+              "com.android.model.library"].any { project.plugins.findPlugin(it) }) {
             throw new ProjectConfigurationException("Please apply 'com.android.application' or 'com.android.library' plugin before applying 'android-scala' plugin", null)
         }
         apply(project, project.extensions.getByName("android"))
@@ -195,6 +196,7 @@ public class AndroidScalaPlugin implements Plugin<Project> {
      */
     void addAndroidScalaCompileTask(Object variant) {
         def javaCompileTask = variant.javaCompile
+        println(".....javaCompileTask: " + javaCompileTask.name)
         // To prevent locking classes.jar by JDK6's URLClassLoader
         def libraryClasspath = javaCompileTask.classpath.grep { it.name != "classes.jar" }
         def scalaVersion = scalaVersionFromClasspath(libraryClasspath)
@@ -216,9 +218,11 @@ public class AndroidScalaPlugin implements Plugin<Project> {
         }
         def variantWorkDir = getVariantWorkDir(variant)
         def scalaCompileTask = project.tasks.create("compile${variant.name.capitalize()}Scala", ScalaCompile)
+        println(".....scalaCompileTask: " + scalaCompileTask.name)
         def scalaSources = variant.variantData.variantConfiguration.sortedSourceProviders.inject([]) { acc, val ->
             acc + val.java.sourceFiles
         }
+        scalaSources.forEach { println("scalaCompileTask source: " + it) }
         scalaCompileTask.source = scalaSources
         scalaCompileTask.destinationDir = javaCompileTask.destinationDir
         scalaCompileTask.sourceCompatibility = javaCompileTask.sourceCompatibility
@@ -253,7 +257,7 @@ public class AndroidScalaPlugin implements Plugin<Project> {
             javaCompileTask.source = [dummySourceFile]
             def compilerArgs = javaCompileTask.options.compilerArgs
             javaCompileOriginalOptionsCompilerArgs.set(compilerArgs)
-            javaCompileTask.options.compilerArgs = compilerArgs +  "-proc:none"
+            javaCompileTask.options.compilerArgs = compilerArgs + "-proc:none"
         }
         javaCompileTask.outputs.upToDateWhen { false }
         javaCompileTask.doLast {
@@ -261,9 +265,14 @@ public class AndroidScalaPlugin implements Plugin<Project> {
             javaCompileTask.destinationDir = javaCompileOriginalDestinationDir.get()
             javaCompileTask.source = javaCompileOriginalSource.get()
             javaCompileTask.options.compilerArgs = javaCompileOriginalOptionsCompilerArgs.get()
+        }
 
+        scalaCompileTask.doFirst {
             // R.java is appended lazily
-            scalaCompileTask.source = [] + new TreeSet(scalaCompileTask.source.collect { it } + javaCompileTask.source.collect { it }) // unique
+            def src = [] + new TreeSet(scalaCompileTask.source.collect { it } + javaCompileTask.source.collect { it })
+            // unique
+            scalaCompileTask.source = src
+            src.forEach { println("doFirst source: " + it) }
             def noisyProperties = ["compiler", "includeJavaRuntime", "incremental", "optimize", "useAnt"]
             InvokerHelper.setProperties(scalaCompileTask.options,
                 javaCompileTask.options.properties.findAll { !noisyProperties.contains(it.key) })
@@ -276,8 +285,10 @@ public class AndroidScalaPlugin implements Plugin<Project> {
                     scalaCompileTask.options[property] = javaCompileTask.options[property]
                 }
             }
-            scalaCompileTask.execute()
+        }
+        scalaCompileTask.doLast {
             project.logger.lifecycle(scalaCompileTask.path)
         }
+        javaCompileTask.finalizedBy(scalaCompileTask)
     }
 }
