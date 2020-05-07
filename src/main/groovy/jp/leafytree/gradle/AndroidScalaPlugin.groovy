@@ -15,7 +15,6 @@
  */
 package jp.leafytree.gradle
 
-import com.google.common.annotations.VisibleForTesting
 import org.apache.commons.io.FileUtils
 import org.codehaus.groovy.runtime.InvokerHelper
 import org.gradle.api.Plugin
@@ -23,13 +22,11 @@ import org.gradle.api.Project
 import org.gradle.api.ProjectConfigurationException
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
-import org.gradle.api.internal.file.DefaultSourceDirectorySetFactory
-import org.gradle.api.internal.file.FileResolver
-import org.gradle.api.internal.file.collections.DefaultDirectoryFileTreeFactory
 import org.gradle.api.internal.tasks.DefaultScalaSourceSet
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.scala.ScalaCompile
 import org.gradle.api.tasks.scala.ScalaCompileOptions
+import org.gradle.internal.impldep.com.google.common.annotations.VisibleForTesting
 import org.gradle.util.ConfigureUtil
 
 import javax.inject.Inject

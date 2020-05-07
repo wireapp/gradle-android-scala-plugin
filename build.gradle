@@ -35,7 +35,6 @@ dependencies {
     implementation gradleApi()
     implementation localGroovy()
     implementation "commons-io:commons-io:2.4"
-    implementation "com.google.guava:guava:17.0"
 
     testImplementation "com.android.tools.build:gradle:3.6.0"
     testImplementation "org.scala-lang:scala-compiler:2.11.7"
