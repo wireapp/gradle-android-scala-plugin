@@ -30,9 +30,9 @@ public class AndroidScalaPluginIntegrationTestTask extends DefaultTask {
     static def TARGET_SDK_VERSION = "targetSdkVersion"
 
     static def buildParameters = [
-        (GRADLE_VERSION)                    : "4.10.2",
+        (GRADLE_VERSION)                    : "5.6.4",
         (SCALA_VERSION)                     : "2.11.7",
-        (ANDROID_GRADLE_PLUGIN_VERSION)     : "3.2.1",
+        (ANDROID_GRADLE_PLUGIN_VERSION)     : "3.6.0",
         (ANDROID_PLUGIN_COMPILE_SDK_VERSION): "android-28",
         (ANDROID_BUILD_TOOLS_VERSION)       : "28.0.3",
         (MIN_SDK_VERSION)                   : "21",
@@ -46,7 +46,7 @@ public class AndroidScalaPluginIntegrationTestTask extends DefaultTask {
             def gradleVersion = buildParameters[GRADLE_VERSION]
             def gradleWrapperProperties = getGradleWrapperProperties(gradleVersion)
             def gradleProperties = getGradleProperties(buildParameters)
-            println "Test $gradleArgs GRADLE_VERSION:$gradleVersion $gradleProperties"
+            println "Test $projectName $gradleArgs GRADLE_VERSION:$gradleVersion $gradleProperties"
             runProject(projectName, gradleArgs, gradleWrapperProperties, gradleProperties)
         }
     }
@@ -58,7 +58,7 @@ public class AndroidScalaPluginIntegrationTestTask extends DefaultTask {
             distributionPath: "wrapper/dists",
             zipStoreBase    : "GRADLE_USER_HOME",
             zipStorePath    : "wrapper/dists",
-            distributionUrl : "http://services.gradle.org/distributions/gradle-" + gradleVersion + "-bin.zip",
+            distributionUrl : "https://services.gradle.org/distributions/gradle-" + gradleVersion + "-bin.zip",
         ])
         gradleWrapperProperties
     }
