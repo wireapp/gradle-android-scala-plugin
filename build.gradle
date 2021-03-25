@@ -96,6 +96,11 @@ uploadArchives {
                         name = 'Maciej Gorywoda'
                         email = 'maciej.gorywoda@wire.com'
                     }
+                    developer {
+                        id = 'gizemb'
+                        name = 'Gizem Burhanoglu'
+                        email = 'gizem@wire.com'
+                    }
                 }
             }
         }
