@@ -45,6 +45,8 @@ dependencies {
 sourceCompatibility = JavaVersion.VERSION_1_7
 targetCompatibility = JavaVersion.VERSION_1_7
 
+def uploadToSonatypeRepository = hasProperty('sonatypeUsername')
+
 /*
 You will need a file gradle.properties in the same folder as this build.gradle.
 In the file you need the following properties:
@@ -58,48 +60,50 @@ signing.secretKeyRingFile=<a path the secret key ring file; you can generate it 
 uploadArchives {
     repositories {
         mavenDeployer {
-            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+            if (uploadToSonatypeRepository) {
+                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
-            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                authentication(userName: sonatypeUsername, password: sonatypePassword)
-            }
-
-            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-                authentication(userName: sonatypeUsername, password: sonatypePassword)
-            }
-
-            pom.project {
-                name 'gradle-android-scala-plugin'
-                packaging 'jar'
-                groupId 'com.wire'
-                artifactId 'gradle-android-scala-plugin'
-                version '2.0.3'
-                description 'A Scala plugin for the Wire Android app, based on https://github.com/saturday06/gradle-android-scala-plugin'
-                url 'https://github.com/wireapp/gradle-android-scala-plugin'
-
-                scm {
-                    connection 'scm:git:git://wireapp/gradle-android-scala-plugin.git'
-                    developerConnection 'scm:git:ssh://wireapp/gradle-android-scala-plugin.git'
-                    url 'http://github.com/wireapp/gradle-android-scala-plugin'
+                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                    authentication(userName: sonatypeUsername, password: sonatypePassword)
                 }
 
-                licenses {
-                    license {
-                        name 'The Apache License, Version 2.0'
-                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    }
+                snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                    authentication(userName: sonatypeUsername, password: sonatypePassword)
                 }
 
-                developers {
-                    developer {
-                        id = 'makingthematrix'
-                        name = 'Maciej Gorywoda'
-                        email = 'maciej.gorywoda@wire.com'
+                pom.project {
+                    name 'gradle-android-scala-plugin'
+                    packaging 'jar'
+                    groupId 'com.wire'
+                    artifactId 'gradle-android-scala-plugin'
+                    version '2.0.3'
+                    description 'A Scala plugin for the Wire Android app, based on https://github.com/saturday06/gradle-android-scala-plugin'
+                    url 'https://github.com/wireapp/gradle-android-scala-plugin'
+
+                    scm {
+                        connection 'scm:git:git://wireapp/gradle-android-scala-plugin.git'
+                        developerConnection 'scm:git:ssh://wireapp/gradle-android-scala-plugin.git'
+                        url 'http://github.com/wireapp/gradle-android-scala-plugin'
                     }
-                    developer {
-                        id = 'gizemb'
-                        name = 'Gizem Burhanoglu'
-                        email = 'gizem@wire.com'
+
+                    licenses {
+                        license {
+                            name 'The Apache License, Version 2.0'
+                            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id = 'makingthematrix'
+                            name = 'Maciej Gorywoda'
+                            email = 'maciej.gorywoda@wire.com'
+                        }
+                        developer {
+                            id = 'gizemb'
+                            name = 'Gizem Burhanoglu'
+                            email = 'gizem@wire.com'
+                        }
                     }
                 }
             }
@@ -124,7 +128,9 @@ artifacts {
 }
 
 signing {
-    sign configurations.archives
+    if (uploadToSonatypeRepository) {
+        sign configurations.archives
+    }
 }
 
 task integTest(type: jp.leafytree.gradle.AndroidScalaPluginIntegrationTestTask, dependsOn: "uploadArchives")
