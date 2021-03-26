@@ -48,6 +48,6 @@ android {
 }
 
 dependencies {
-    implementation "org.scala-lang:scala-library:2.11.7"
+    implementation "org.scala-lang:scala-library:2.11.12"
     implementation "com.android.support:multidex:1.0.2"
 }

@@ -38,59 +38,75 @@ dependencies {
     implementation "com.google.guava:guava:17.0"
 
     testImplementation "com.android.tools.build:gradle:3.2.1"
-    testImplementation "org.scala-lang:scala-compiler:2.11.7"
+    testImplementation "org.scala-lang:scala-compiler:2.11.12"
     testImplementation "junit:junit:4.12"
 }
 
-description "Gradle Android Scala Plugin adds scala language support to official gradle android plugin."
-group = "com.wire.gradle"
-version = "2.0.0-SNAPSHOT"
-sourceCompatibility = JavaVersion.VERSION_1_6
-targetCompatibility = JavaVersion.VERSION_1_6
+sourceCompatibility = JavaVersion.VERSION_1_7
+targetCompatibility = JavaVersion.VERSION_1_7
 
-def uploadToSonatypeRepository = hasProperty("sonatypeUserName")
+def uploadToSonatypeRepository = hasProperty('sonatypeUsername')
 
+/*
+You will need a file gradle.properties in the same folder as this build.gradle.
+In the file you need the following properties:
+sonatypeUsername=<Your username on the Sonatype Nexus website>
+sonatypePassword=<Your password on the Sonatype Nexus website; NOT the PGP password>
+
+signing.keyId=<the short key id (last 8 characters of the long one)>
+signing.password=<the PGP password>
+signing.secretKeyRingFile=<a path the secret key ring file; you can generate it with `gpg --keyring secring.gpg --export-secret-keys`>
+*/
 uploadArchives {
     repositories {
         mavenDeployer {
-            repository(url: uri("gh-pages/repository/snapshot"))
+            if (uploadToSonatypeRepository) {
+                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
-//            if (uploadToSonatypeRepository) {
-//                def repositoryUrl = version.endsWith("-SNAPSHOT") ? "https://oss.sonatype.org/content/repositories/snapshots"
-//                                                                  : "https://oss.sonatype.org/service/local/staging/deploy/maven2"
-//                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-//
-//                repository(url: repositoryUrl) {
-//                    authentication(userName: sonatypeUserName, password: sonatypePassword)
-//                }
-//                pom.project {
-//                    name "Gradle Android Scala Plugin"
-//                    packaging "jar"
-//                    description project.description
-//                    url "https://github.com/saturday06/gradle-android-scala-plugin"
-//
-//                    scm {
-//                        url "scm:git@github.com:saturday06/gradle-android-scala-plugin.git"
-//                        connection "scm:git@github.com:saturday06/gradle-android-scala-plugin.git"
-//                        developerConnection "scm:git@github.com:saturday06/gradle-android-scala-plugin.git"
-//                    }
-//
-//                    licenses {
-//                        license {
-//                            name "The Apache Software License, Version 2.0"
-//                            url "http://www.apache.org/licenses/LICENSE-2.0.txt"
-//                            distribution "repo"
-//                        }
-//                    }
-//
-//                    developers {
-//                        developer {
-//                            id "saturday06"
-//                            name "Isamu Mogi"
-//                        }
-//                    }
-//                }
-//            }
+                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                    authentication(userName: sonatypeUsername, password: sonatypePassword)
+                }
+
+                snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                    authentication(userName: sonatypeUsername, password: sonatypePassword)
+                }
+
+                pom.project {
+                    name 'gradle-android-scala-plugin'
+                    packaging 'jar'
+                    groupId 'com.wire'
+                    artifactId 'gradle-android-scala-plugin'
+                    version '2.0.3'
+                    description 'A Scala plugin for the Wire Android app, based on https://github.com/saturday06/gradle-android-scala-plugin'
+                    url 'https://github.com/wireapp/gradle-android-scala-plugin'
+
+                    scm {
+                        connection 'scm:git:git://wireapp/gradle-android-scala-plugin.git'
+                        developerConnection 'scm:git:ssh://wireapp/gradle-android-scala-plugin.git'
+                        url 'http://github.com/wireapp/gradle-android-scala-plugin'
+                    }
+
+                    licenses {
+                        license {
+                            name 'The Apache License, Version 2.0'
+                            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id = 'makingthematrix'
+                            name = 'Maciej Gorywoda'
+                            email = 'maciej.gorywoda@wire.com'
+                        }
+                        developer {
+                            id = 'gizemb'
+                            name = 'Gizem Burhanoglu'
+                            email = 'gizem@wire.com'
+                        }
+                    }
+                }
+            }
         }
     }
 }
